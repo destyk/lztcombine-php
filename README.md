@@ -4,7 +4,7 @@
     <img alt="Made with PHP" src="https://img.shields.io/badge/Made%20with-PHP-%23FFD242?logo=php&logoColor=white">
     <img alt="Repo size" src="https://img.shields.io/github/repo-size/destyk/lztcombine-php">
     <img alt="issues" src="https://img.shields.io/github/issues/destyk/lztcombine-php">
-    <img alt="Downloads" src="https://img.shields.io/github/downloads/destyk/lztcombine-php/total">
+    <img alt="Downloads" src="https://img.shields.io/packagist/dm/destyk/lztcombine-php">
 </p>
 
 ## Полезная информация
