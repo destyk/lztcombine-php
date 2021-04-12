@@ -1,0 +1,31 @@
+{
+    "name":"destyk/lztcombine-php",
+    "version": "1.0.1",
+    "type": "library",
+    "description": "LztCombine PHP - библиотека для программного использования ВСЕГО функционала форума",
+    "keywords": ["lzt","php","api","builder"],
+    "homepage": "https://github.com/destyk/lztcombine-php",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "destyk",
+            "email": "nikita.karpov.1910@mail.ru",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/destyk/lztcombine-php",
+        "issues": "https://github.com/destyk/lztcombine-php/issues"
+    },
+    "require":{
+        "php":">=7.3.0",
+        "curl/curl": "1.9.*"
+    },
+    "autoload":{
+        "classmap": [
+            "src",
+            "src/API",
+            "src/Builder"
+        ]
+    }
+}
