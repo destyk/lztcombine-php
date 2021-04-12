@@ -121,7 +121,7 @@ class Init
      * @throws \Exception Выбрасывается при невалидном методе запроса.
      * @throws RequestException Выбрасывается при невалидном ответе от API.
      */
-    public function create($uri, $method = self::GET, array $body = [], string $userAgent = self::DEFAULT_USERAGENT)
+    public function createMethod($uri, $method = self::GET, array $body = [], string $userAgent = self::DEFAULT_USERAGENT)
     {
         return $this->requestBuilder($uri, $method, $body, $userAgent);
     }
