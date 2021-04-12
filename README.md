@@ -13,6 +13,11 @@
   - [:memo: Как использовать?](#memo-использование-buildera)
   - [:open_file_folder: Доступные методы](#open_file_folder-доступные-методы-buildera)
     - [:pushpin: Метод createMethod](#pushpin-метод-createmethod)
+    - [:pushpin: Метод market/purchase](#pushpin-метод-marketpurchase)
+    - [:pushpin: Метод market/purchaseCheck](#pushpin-метод-marketpurchasecheck)
+    - [:pushpin: Метод market/purchaseConfirm](#pushpin-метод-marketpurchaseconfirm)
+    - [:pushpin: Метод market/paymentCreate](#pushpin-метод-marketpaymentcreate)
+    - [:pushpin: Метод market/paymentCheck](#pushpin-метод-marketpaymentcheck)
     - [:pushpin: Метод threads/bump](#pushpin-метод-threadsbump)
 - [:label: Официальное API](#label-официальное-api)
   - [:memo: Как использовать?](#memo-использование-официального-api)
@@ -83,6 +88,56 @@ try {
 // Для наглядности можем создать вручную метод ```threads/bump```
 $threadId = 2444332; // ID Вашей темы, которую нужно поднять
 $builder->createMethod('threads/' . $threadId . '/bump', $builder::GET);
+```
+#### :pushpin: Метод ```market/purchase```
+
+Попытка купить указанный аккаунт.
+```php
+...
+
+$itemId = 2444332; // ID аккаунта, который нужно купить
+$price = 15; // Стоимость, за которую готовы совершить покупку
+$builder->market()->purchase($itemId, $price);
+```
+#### :pushpin: Метод ```market/purchaseCheck```
+
+Проверяем купленный аккаунт на валид/невалид.<br>
+:warning: Важно! Этот метод необходимо вызывать после ```market/purchase```
+```php
+...
+
+$itemId = 2444332; // ID аккаунта, который нужно проверить
+$builder->market()->purchaseCheck($itemId);
+```
+#### :pushpin: Метод ```market/purchaseConfirm```
+
+Подтверждаем покупку и получаем купленный товар.<br>
+:warning: Важно! Этот метод необходимо вызывать после ```market/purchaseCheck```
+```php
+...
+
+$itemId = 2444332; // ID аккаунта, покупку которого нужно подтвердить
+$builder->market()->purchaseConfirm($itemId);
+```
+#### :pushpin: Метод ```market/paymentCreate```
+
+Создаёт новую заявку на пополнение счёта
+```php
+...
+
+$amount = 50; // Сумма для пополнения
+$currency = 'rub'; // Валюта пополнения
+$method = 'P2PQiwi'; // Метод оплаты
+$builder->market()->paymentCreate($currency, $amount, $method);
+```
+#### :pushpin: Метод ```market/paymentCheck```
+
+Проверяет поступление платежа по ранее созданной заявке.
+```php
+...
+
+$orderId = 125531; // ID ранее созданной Вами заявки
+$builder->market()->paymentCheck($orderId);
 ```
 #### :pushpin: Метод ```threads/bump```
 

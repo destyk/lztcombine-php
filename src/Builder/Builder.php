@@ -144,6 +144,18 @@ class Init
     }
 
     /**
+     * Предоставляет доступ к методам маркета
+     *
+     * @return \DestyK\LztPHP\Builder\Market
+     *
+     * @throws RequestException Выбрасывается при невалидном ответе от API.
+     */
+    public function market()
+    {
+        return new Market($this->_xfToken, $this->_xfUser, $this->_xfSession, $this->options);
+    }
+
+    /**
      * Алиас к protected функции requestBuilder
      *
      * @return bool|array Ответ запроса.
@@ -203,14 +215,6 @@ class Init
                 throw new \Exception('Not supported method ' . $method . '.');
         }
 
-        if (true === $this->internalCurl->error) {
-            throw new RequestException(
-                clone $this->internalCurl,
-                $this->internalCurl->error_message . ' | ' . $this->internalCurl->response,
-                $this->internalCurl->error_code
-            );
-        }
-
         if (false === empty($this->internalCurl->response)) {
             $json = json_decode($this->internalCurl->response, true);
             if (null === $json) {
@@ -222,6 +226,14 @@ class Init
             }
 
             return $json;
+        }
+
+        if (true === $this->internalCurl->error) {
+            throw new RequestException(
+                clone $this->internalCurl,
+                $this->internalCurl->error_message,
+                $this->internalCurl->error_code
+            );
         }
 
         return true;
