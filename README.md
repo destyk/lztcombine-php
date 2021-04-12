@@ -51,13 +51,13 @@
 
 ## :memo: Использование builder'a
 :warning: Важно! Для корректной работы builder'a, требуется установленное php-расширение ```V8Js```.<br><br>
-Чтобы начать работу, Вам необходимы ```_xfToken``` и ```xf_session```.<br>
+Чтобы начать работу, Вам необходимы ```_xfToken```, ```xf_user``` и ```xf_session```.<br>
 Узнать как и где их получить можно <a href="https://disk.yandex.ru/d/HmBjsb1WPWadLw">здесь</a>.
 ```php
 require('vendor/autoload.php');
 
 try {
-    $builder = new \DestyK\LztPHP\Builder\Init('*_xfToken*', '*xf_session*');
+    $builder = new \DestyK\LztPHP\Builder\Init('*_xfToken*', '*xf_user*', '*xf_session*');
     
     // Можно создать свой собственный метод. Например, добавить человека в список игнор-листа.
     $builder->createMethod('account/ignore', $builder::POST, [
