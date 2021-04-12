@@ -1,6 +1,6 @@
 {
     "name":"destyk/lztcombine-php",
-    "version": "dev@1.0.3",
+    "version": "1.0.3-beta",
     "minimum-stability": "dev",
     "type": "library",
     "description": "LztCombine PHP - библиотека для программного использования ВСЕГО функционала форума",
