@@ -125,8 +125,18 @@ class Init
             throw new \ErrorException('The V8Js extensions is not loaded, make sure you have installed the V8Js extension');
         }
 
+        // Разбиваем токен пользователя на части
+        $exploded_xfUser = explode(',', $_xfUser);
+        if (!isset($exploded_xfUser[1])) {
+            throw new \ErrorException('Wrong _xfUser passed');
+        }
+
         $this->_xfToken     = (string) $_xfToken;
-        $this->_xfUser     =  (string) $_xfUser;
+        $this->_xfUser      = (array) [
+            'id' => trim($exploded_xfUser[0]),
+            'hash' => trim($exploded_xfUser[1]),
+            'full' => $_xfUser
+        ];
         $this->_xfSession   = (string) $_xfSession;
         $this->options      = $options;
         $this->internalCurl = new Curl();
@@ -141,7 +151,7 @@ class Init
      */
     public function threads()
     {
-        return new Threads($this->_xfToken, $this->_xfUser, $this->_xfSession, $this->options);
+        return new Threads($this->_xfToken, $this->_xfUser['full'], $this->_xfSession, $this->options);
     }
 
     /**
@@ -153,7 +163,7 @@ class Init
      */
     public function market()
     {
-        return new Market($this->_xfToken, $this->_xfUser, $this->_xfSession, $this->options);
+        return new Market($this->_xfToken, $this->_xfUser['full'], $this->_xfSession, $this->options);
     }
 
     /**
@@ -185,7 +195,7 @@ class Init
     protected function requestBuilder($uri, $method = self::GET, array $body = [], string $userAgent = self::DEFAULT_USERAGENT)
     {
         $this->internalCurl->reset();
-        foreach ($this->options as $option => $value) {+
+        foreach ($this->options as $option => $value) {
             $this->internalCurl->setOpt($option, $value);
         }
 
@@ -203,8 +213,8 @@ class Init
         $this->internalCurl->setUserAgent($userAgent);
         $this->internalCurl->setOpt(CURLOPT_SSL_VERIFYPEER, false);
         $this->internalCurl->setOpt(CURLOPT_SSL_VERIFYHOST, false);
-        $this->internalCurl->setOpt(CURLOPT_COOKIEJAR, self::PATH_TO_COOKIES . $this->_xfUser . '.txt');
-        $this->internalCurl->setOpt(CURLOPT_COOKIEFILE, self::PATH_TO_COOKIES . $this->_xfUser . '.txt');
+        $this->internalCurl->setOpt(CURLOPT_COOKIEJAR, self::PATH_TO_COOKIES . $this->_xfUser['id'] . '.txt');
+        $this->internalCurl->setOpt(CURLOPT_COOKIEFILE, self::PATH_TO_COOKIES . $this->_xfUser['id'] . '.txt');
         switch ($method) {
             case self::GET:
                 $this->internalCurl->get($url, $params);
@@ -260,7 +270,7 @@ class Init
 
         return [
             $signRequest->name => $signRequest->value,
-            'xf_user' => $this->_xfUser,
+            'xf_user' => $this->_xfUser['full'],
             'xf_session' => $this->_xfSession,
             'xf_logged_in' => 1
         ];
@@ -291,7 +301,7 @@ class Init
     /**
      * Загрузка файла с форума.
      *
-     * @return string Содержимое загруженногоф файла.
+     * @return string Содержимое загруженного файла.
      *
      * @throws RequestException Выбрасывается, когда файл не был загружен.
      */
