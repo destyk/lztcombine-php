@@ -275,8 +275,9 @@ class Init
     protected function getReadyLib()
     {
         if (empty($this->readyLib)) {
-            $loadJSFromUrl = $this->loadFileFromUrl(self::FORUM_URI . self::JS_LIB_URI);
-            if (!$loadJSFromUrl) {
+            try {
+                $loadJSFromUrl = $this->loadFileFromUrl(self::FORUM_URI . self::JS_LIB_URI);
+            } catch(Exception $e) {
                 throw new \Exception('Cannot load process.js from forum');
             }
 
