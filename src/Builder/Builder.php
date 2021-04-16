@@ -95,11 +95,12 @@ class Init
     protected $internalCurl;
 
     /**
-     * Текущий алфавит шифра
+     * Скомипилированная либа JS
+     * На основе которой строится параметр df_id
      *
      * @var string
      */
-    protected $readyLib;
+    protected $compiledLib;
 
     /**
      * Дополнительные заголовки к запросу
@@ -251,7 +252,7 @@ class Init
         $v8 = new \V8Js();
 
         try {
-            $compiled = $v8->executeString($this->getReadyLib());
+            $compiled = $v8->executeString($this->getCompiledLib());
             $signRequest = json_decode($compiled);
         } catch (V8JsException $e) {
             throw new \Exception($e->getMessage());
@@ -272,19 +273,19 @@ class Init
      *
      * @throws Exception Выбрасывается, когда файл не был загружен.
      */
-    protected function getReadyLib()
+    protected function getCompiledLib()
     {
-        if (empty($this->readyLib)) {
+        if (empty($this->compiledLib)) {
             try {
                 $loadJSFromUrl = $this->loadFileFromUrl(self::FORUM_URI . self::JS_LIB_URI);
             } catch(Exception $e) {
                 throw new \Exception('Cannot load process.js from forum');
             }
 
-            $this->readyLib = str_replace("document[_0x2da6('0x3')]=_0x474ac8+'='+_0x5894d4+_0x2da6('0x4')+_0x52e8c0+_0x2da6('0x5');setTimeout(function(){location[_0x2da6('0x6')]();},0xc8);}", "return JSON.stringify({name:_0x474ac8,value:_0x5894d4});}process();", $loadJSFromUrl);
+            $this->compiledLib = str_replace("document[_0x2da6('0x3')]=_0x474ac8+'='+_0x5894d4+_0x2da6('0x4')+_0x52e8c0+_0x2da6('0x5');setTimeout(function(){location[_0x2da6('0x6')]();},0xc8);}", "return JSON.stringify({name:_0x474ac8,value:_0x5894d4});}process();", $loadJSFromUrl);
         }
 
-        return $this->readyLib;
+        return $this->compiledLib;
     }
 
     /**
