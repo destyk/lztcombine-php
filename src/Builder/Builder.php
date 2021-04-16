@@ -19,7 +19,7 @@ use DestyK\LztPHP\RequestException;
  * @see https://github.com/destyk/lztcombine-php#label-builder
  *
  * @property string $_xfToken   Токен для запросов.
- * @property string $_xfSession Идентификатор сессии для запросов
+ * @property string $_xfUser    Идентификатор пользователя для запросов
  * @property Curl   $curl       Библиотека для работы с cURL
  */
 class Init
@@ -81,13 +81,6 @@ class Init
     protected $_xfUser;
 
     /**
-     * Идентификатор сессии для запросов
-     *
-     * @var string
-     */
-    protected $_xfSession;
-
-    /**
      * Либа для работы с запросами
      *
      * @var Curl
@@ -114,12 +107,11 @@ class Init
      *
      * @param string $_xfToken   Токен для запросов
      * @param string $_xfUser    Идентификатор пользователя для запросов
-     * @param string $_xfSession Идентификатор сессии для запросов
      * @param array  $options    Дополнительные заголовки к запросу.
      *
      * @throws \ErrorException Выброс исключения при неожиданной ошибке в Curl запросе.
      */
-    public function __construct($_xfToken = '', $_xfUser = '', $_xfSession = '', array $options = [])
+    public function __construct($_xfToken = '', $_xfUser = '', array $options = [])
     {
         if (!extension_loaded('V8Js')) {
             throw new \ErrorException('The V8Js extensions is not loaded, make sure you have installed the V8Js extension');
@@ -137,7 +129,6 @@ class Init
             'hash' => trim($exploded_xfUser[1]),
             'full' => $_xfUser
         ];
-        $this->_xfSession   = (string) $_xfSession;
         $this->options      = $options;
         $this->internalCurl = new Curl();
     }
@@ -151,7 +142,7 @@ class Init
      */
     public function threads()
     {
-        return new Threads($this->_xfToken, $this->_xfUser['full'], $this->_xfSession, $this->options);
+        return new Threads($this->_xfToken, $this->_xfUser['full'], $this->options);
     }
 
     /**
@@ -163,7 +154,7 @@ class Init
      */
     public function market()
     {
-        return new Market($this->_xfToken, $this->_xfUser['full'], $this->_xfSession, $this->options);
+        return new Market($this->_xfToken, $this->_xfUser['full'], $this->options);
     }
 
     /**
@@ -271,7 +262,6 @@ class Init
         return [
             $signRequest->name => $signRequest->value,
             'xf_user' => $this->_xfUser['full'],
-            'xf_session' => $this->_xfSession,
             'xf_logged_in' => 1
         ];
     }
