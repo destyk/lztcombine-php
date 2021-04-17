@@ -116,7 +116,7 @@ class Init
         }
 
         // Разбиваем токен пользователя на части
-        $exploded_xfUser = explode(',', $_xfUser);
+        $exploded_xfUser = explode(',', urldecode($_xfUser));
         if (!isset($exploded_xfUser[1])) {
             throw new \ErrorException('Wrong _xfUser passed');
         }
