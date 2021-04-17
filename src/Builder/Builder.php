@@ -132,6 +132,18 @@ class Init
     }
 
     /**
+     * Предоставляет доступ к методам авторизации
+     *
+     * @return \DestyK\LztPHP\Builder\Login
+     *
+     * @throws RequestException Выбрасывается при невалидном ответе от API.
+     */
+    public function login()
+    {
+        return new Login($this->_xfUser['full'], $this->options);
+    }
+
+    /**
      * Предоставляет доступ к методам 'threads'
      *
      * @return \DestyK\LztPHP\Builder\Threads
@@ -224,13 +236,26 @@ class Init
                 }
 
                 if (true === isset($json['error'])) {
-                    if (mb_stripos($json['error'][0], 'Обнаружено нарушение безопасности', 0, 'UTF-8') !== false) {
+                    // Скорее всего, устарел или отсутствует вовсе CSRF-токен. Обновляем...
+                    if (false !== mb_stripos($json['error'][0], 'Обнаружено нарушение безопасности', 0, 'UTF-8')) {
                         $this->loadNewCsrfToken();
                         return $this->requestBuilder($uri, $method, $body, $userAgent);
                     }
 
-                    $this->clear();
+                    // Не очищаем куки, если всё ещё проходим 2FA-авторизацию
+                    if (false === stripos($json['error'][0], 'The two-step verification')) {
+                        $this->clear();
+                    }
                     throw new RequestException(clone $this->internalCurl, $json['error'][0]);
+                }
+
+                // Нужно пройти проверку системой 2FA
+                if (true === isset($json['_redirectTarget']) && false !== stripos($json['_redirectTarget'], 'login/two-step')) {
+                    if ($uri == 'login/two-step') {
+                        return $this->requestBuilder($uri, $method, $body, $userAgent);
+                    }
+
+                    throw new \Exception('You need to call the method: $builder->login()->verify2fa(code, provider). If already called, call again');
                 }
 
                 return $json;
