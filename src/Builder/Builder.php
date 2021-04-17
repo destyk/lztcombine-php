@@ -116,7 +116,8 @@ class Init
         }
 
         // Разбиваем токен пользователя на части
-        $exploded_xfUser = explode(',', urldecode($_xfUser));
+        $_xfUser = urldecode($_xfUser);
+        $exploded_xfUser = explode(',', $_xfUser);
         if (!isset($exploded_xfUser[1])) {
             throw new \ErrorException('Wrong _xfUser passed');
         }
@@ -339,7 +340,7 @@ class Init
 
         preg_match('/_csrfToken: "(.*?)"/', $refreshHtml, $csrfToken);
 
-        if (!isset($csrfToken[1])) {
+        if (!isset($csrfToken[1]) || empty($csrfToken[1])) {
             throw new \Exception('Wrong response when refreshing csrf-token');
         }
 
