@@ -116,7 +116,8 @@ class Init
         }
 
         // Разбиваем токен пользователя на части
-        $exploded_xfUser = explode(',', urldecode($_xfUser));
+        $_xfUser = urldecode($_xfUser);
+        $exploded_xfUser = explode(',', $_xfUser);
         if (!isset($exploded_xfUser[1])) {
             throw new \ErrorException('Wrong _xfUser passed');
         }
@@ -213,6 +214,7 @@ class Init
             default:
                 throw new \Exception('Not supported method ' . $method . '.');
         }
+        $this->internalCurl->close();
 
         if (false === empty($this->internalCurl->response)) {
             if ($isJson) {
@@ -227,6 +229,7 @@ class Init
                         return $this->requestBuilder($uri, $method, $body, $userAgent);
                     }
 
+                    $this->clear();
                     throw new RequestException(clone $this->internalCurl, $json['error'][0]);
                 }
 
@@ -237,6 +240,7 @@ class Init
         }
 
         if (true === $this->internalCurl->error) {
+            $this->clear();
             throw new RequestException(
                 clone $this->internalCurl,
                 $this->internalCurl->error_message,
@@ -339,7 +343,7 @@ class Init
 
         preg_match('/_csrfToken: "(.*?)"/', $refreshHtml, $csrfToken);
 
-        if (!isset($csrfToken[1])) {
+        if (!isset($csrfToken[1]) || empty($csrfToken[1])) {
             throw new \Exception('Wrong response when refreshing csrf-token');
         }
 
@@ -375,5 +379,24 @@ class Init
     {
         $file = self::PATH_TO_CSRF . 'usr_' . $this->_xfUser['id'] . '.txt';
         return file_exists($file) ? file_get_contents($file) : '';
+    }
+
+    /**
+     * Очистка файлов cookies & csrf пользователя
+     *
+     * @return void
+     */
+    protected function clear()
+    {
+        $usr_cookie = self::PATH_TO_COOKIES . 'usr_' . $this->_xfUser['id'] . '.txt';
+        $usr_csrf = self::PATH_TO_CSRF . 'usr_' . $this->_xfUser['id'] . '.txt';
+
+        if (file_exists($usr_cookie)) {
+            unlink($usr_cookie);
+        }
+
+        if (file_exists($usr_csrf)) {
+            unlink($usr_csrf);
+        }
     }
 }
