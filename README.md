@@ -14,6 +14,7 @@
   - [:memo: Как использовать?](#memo-использование-buildera)
   - [:open_file_folder: Доступные методы](#open_file_folder-доступные-методы-buildera)
     - [:pushpin: Метод createMethod](#pushpin-метод-createmethod)
+    - [:pushpin: Метод login/verify2fa](#pushpin-метод-loginverify2fa)
     - [:pushpin: Метод market/purchase](#pushpin-метод-marketpurchase)
     - [:pushpin: Метод market/purchaseCheck](#pushpin-метод-marketpurchasecheck)
     - [:pushpin: Метод market/purchaseConfirm](#pushpin-метод-marketpurchaseconfirm)
@@ -65,6 +66,10 @@ require('vendor/autoload.php');
 try {
     $builder = new \DestyK\LztPHP\Builder\Init('*xf_user*');
     
+    // Если на Вашем аккаунте включена двуфакторная система авторизации, то изначально стоит вызвать метод верификации
+    // Подробнее об этом методе чуть ниже
+    $builder->login()->verify2fa('*Одноразовый код*', '*Тип приложения*');
+    
     // Можно создать свой собственный метод. Например, добавить человека в список игнор-листа.
     $builder->createMethod('account/ignore', $builder::POST, [
         'users' => 'BotFather,'
@@ -80,6 +85,20 @@ try {
 
 ## :open_file_folder: Доступные методы builder'a
 
+#### :pushpin: Метод ```login/verify2fa```
+
+Позволяет пройти проверку системой 2FA.<br>
+:warning: Важно! Этот метод стоит использовать единоразово, если появилось следующее сообщение при включенной системе двуфакторной авторизации: ```You need to call the method: $builder->login()->verify2fa(code, provider)```.
+
+```php
+...
+
+// Проходим авторизацию с помощью системы 2FA
+$code = 2444332; // Одноразовый код из приложения, Telegram или же с эл. почты
+$provider = 'totp'; // Тип приложения. Доступны значения: totp (приложение), telegram (Telegram) и email (эл. почта)
+$builder->login()->verify2fa($code, $provider);
+```
+После успешного прохождения авторизации, вызов этого метода лучше убрать, т.к. будет совершаться дополнительный лишний запрос к форуму.
 #### :pushpin: Метод ```createMethod```
 
 Позволяет создать абсолютно любой запрос к форуму lolzteam, минуя официальный API.
