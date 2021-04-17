@@ -4,7 +4,8 @@
     <img alt="Made with PHP" src="https://img.shields.io/badge/Made%20with-PHP-%23FFD242?logo=php&logoColor=white">
     <img alt="Repo size" src="https://img.shields.io/github/repo-size/destyk/lztcombine-php">
     <img alt="issues" src="https://img.shields.io/github/issues/destyk/lztcombine-php">
-    <img alt="Downloads" src="https://img.shields.io/packagist/dm/destyk/lztcombine-php">
+    <img alt="Downloads" src="https://img.shields.io/packagist/dt/destyk/lztcombine-php?label=downloads&logo=Packagist&logoColor=white">
+    <img alt="Downloads" src="https://img.shields.io/github/downloads/destyk/lztcombine-php/total?color=orange&label=downloads&logo=GitHub">
 </p>
 
 ## Полезная информация
@@ -56,13 +57,13 @@
 
 ## :memo: Использование builder'a
 :warning: Важно! Для корректной работы builder'a, требуется установленное php-расширение ```V8Js```.<br><br>
-Чтобы начать работу, Вам необходимы ```_xfToken```, ```xf_user``` и ```xf_session```.<br>
-Узнать как и где их получить можно <a href="https://disk.yandex.ru/d/HmBjsb1WPWadLw">здесь</a>.
+Чтобы начать работу, Вам необходим параметр ```xf_user```.<br>
+Узнать как и где его получить можно <a href="https://disk.yandex.ru/i/RatjHwrb-yN3VA">здесь</a>.
 ```php
 require('vendor/autoload.php');
 
 try {
-    $builder = new \DestyK\LztPHP\Builder\Init('*_xfToken*', '*xf_user*', '*xf_session*');
+    $builder = new \DestyK\LztPHP\Builder\Init('*xf_user*');
     
     // Можно создать свой собственный метод. Например, добавить человека в список игнор-листа.
     $builder->createMethod('account/ignore', $builder::POST, [
@@ -85,7 +86,7 @@ try {
 ```php
 ...
 
-// Для наглядности можем создать вручную метод ```threads/bump```
+// Для наглядности можем создать вручную метод threads/bump
 $threadId = 2444332; // ID Вашей темы, которую нужно поднять
 $builder->createMethod('threads/' . $threadId . '/bump', $builder::GET);
 ```
