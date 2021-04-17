@@ -18,7 +18,6 @@ use DestyK\LztPHP\RequestException;
  *
  * @see https://github.com/destyk/lztcombine-php#label-builder
  *
- * @property string $_xfToken   Токен для запросов.
  * @property string $_xfUser    Идентификатор пользователя для запросов
  * @property Curl   $curl       Библиотека для работы с cURL
  */
@@ -67,11 +66,11 @@ class Init
     const PATH_TO_COOKIES = __dir__ . '/cookies/';
 
     /**
-     * Токен для запросов
+     * Директория для сохранения csrf-токенов
      *
-     * @var string
+     * @const string
      */
-    protected $_xfToken;
+    const PATH_TO_CSRF = __dir__ . '/csrf/';
 
     /**
      * Идентификатор пользователя для запросов
@@ -105,13 +104,12 @@ class Init
     /**
      * Конструктор для билдера.
      *
-     * @param string $_xfToken   Токен для запросов
      * @param string $_xfUser    Идентификатор пользователя для запросов
      * @param array  $options    Дополнительные заголовки к запросу.
      *
      * @throws \ErrorException Выброс исключения при неожиданной ошибке в Curl запросе.
      */
-    public function __construct($_xfToken = '', $_xfUser = '', array $options = [])
+    public function __construct($_xfUser = '', array $options = [])
     {
         if (!extension_loaded('V8Js')) {
             throw new \ErrorException('The V8Js extensions is not loaded, make sure you have installed the V8Js extension');
@@ -123,7 +121,6 @@ class Init
             throw new \ErrorException('Wrong _xfUser passed');
         }
 
-        $this->_xfToken     = (string) $_xfToken;
         $this->_xfUser      = (array) [
             'id' => trim($exploded_xfUser[0]),
             'hash' => trim($exploded_xfUser[1]),
@@ -142,7 +139,7 @@ class Init
      */
     public function threads()
     {
-        return new Threads($this->_xfToken, $this->_xfUser['full'], $this->options);
+        return new Threads($this->_xfUser['full'], $this->options);
     }
 
     /**
@@ -154,7 +151,7 @@ class Init
      */
     public function market()
     {
-        return new Market($this->_xfToken, $this->_xfUser['full'], $this->options);
+        return new Market($this->_xfUser['full'], $this->options);
     }
 
     /**
@@ -183,7 +180,7 @@ class Init
      * @throws \Exception Выбрасывается при неподдерживаемом $method запроса.
      * @throws RequestException Выбрасывается при невалидном ответе от API.
      */
-    protected function requestBuilder($uri, $method = self::GET, array $body = [], string $userAgent = self::DEFAULT_USERAGENT)
+    protected function requestBuilder($uri, $method = self::GET, array $body = [], string $userAgent = self::DEFAULT_USERAGENT, $isJson = true)
     {
         $this->internalCurl->reset();
         foreach ($this->options as $option => $value) {
@@ -195,17 +192,17 @@ class Init
         }
 
         $url = self::FORUM_URI . $uri;
-        $params = array_merge($body, [
+        $params = array_merge([
             '_xfNoRedirect' => 1,
-            '_xfToken' => $this->_xfToken,
+            '_xfToken' => $this->getCsrfToken(),
             '_xfResponseType' => 'json'
-        ]);
+        ], $body);
 
         $this->internalCurl->setUserAgent($userAgent);
         $this->internalCurl->setOpt(CURLOPT_SSL_VERIFYPEER, false);
         $this->internalCurl->setOpt(CURLOPT_SSL_VERIFYHOST, false);
-        $this->internalCurl->setOpt(CURLOPT_COOKIEJAR, self::PATH_TO_COOKIES . $this->_xfUser['id'] . '.txt');
-        $this->internalCurl->setOpt(CURLOPT_COOKIEFILE, self::PATH_TO_COOKIES . $this->_xfUser['id'] . '.txt');
+        $this->internalCurl->setOpt(CURLOPT_COOKIEJAR, self::PATH_TO_COOKIES . 'usr_' . $this->_xfUser['id'] . '.txt');
+        $this->internalCurl->setOpt(CURLOPT_COOKIEFILE, self::PATH_TO_COOKIES . 'usr_' . $this->_xfUser['id'] . '.txt');
         switch ($method) {
             case self::GET:
                 $this->internalCurl->get($url, $params);
@@ -218,16 +215,25 @@ class Init
         }
 
         if (false === empty($this->internalCurl->response)) {
-            $json = json_decode($this->internalCurl->response, true);
-            if (null === $json) {
-                throw new RequestException(clone $this->internalCurl, json_last_error_msg(), json_last_error());
+            if ($isJson) {
+                $json = json_decode($this->internalCurl->response, true);
+                if (null === $json) {
+                    throw new RequestException(clone $this->internalCurl, json_last_error_msg(), json_last_error());
+                }
+
+                if (true === isset($json['error'])) {
+                    if (mb_stripos($json['error'][0], 'Обнаружено нарушение безопасности', 0, 'UTF-8') !== false) {
+                        $this->loadNewCsrfToken();
+                        return $this->requestBuilder($uri, $method, $body, $userAgent);
+                    }
+
+                    throw new RequestException(clone $this->internalCurl, $json['error'][0]);
+                }
+
+                return $json;
             }
 
-            if (true === isset($json['error'])) {
-                throw new RequestException(clone $this->internalCurl, $json['error'][0]);
-            }
-
-            return $json;
+            return $this->internalCurl->response;
         }
 
         if (true === $this->internalCurl->error) {
@@ -312,5 +318,62 @@ class Init
         }
 
         return $this->internalCurl->response;
+    }
+
+    /**
+     * Загрузка нового CSRF-токена
+     *
+     * @return string Новый CSRF-токен
+     *
+     * @throws RequestException Выбрасывается, когда возникла ошибка при обновлении csrf-токена.
+     */
+    protected function loadNewCsrfToken()
+    {
+        try {
+            $refreshHtml = $this->requestBuilder('login/csrf-token-refresh', self::POST, [
+                '_xfResponseType' => 'html'
+            ], self::DEFAULT_USERAGENT, false);
+        } catch(Exception $e) {
+            throw new \Exception('Cannot refresh csrf-token: ' . $e->getMessage());
+        }
+
+        preg_match('/_csrfToken: "(.*?)"/', $refreshHtml, $csrfToken);
+
+        if (!isset($csrfToken[1])) {
+            throw new \Exception('Wrong response when refreshing csrf-token');
+        }
+
+        $this->putCsrfTokenToFile($csrfToken[1]);
+        return $csrfToken[1];
+    }
+
+    /**
+     * Сохранение CSRF-токена в файл
+     *
+     * @param string $csrfToken Новый CSRF-токен
+     *
+     * @return boolean Успешное/неуспешное сохранение CSRF-токена
+     *
+     * @throws RequestException Выбрасывается при возникновении ошибки записи csrf-токена в файл.
+     */
+    protected function putCsrfTokenToFile(string $csrfToken)
+    {
+        $file = self::PATH_TO_CSRF . 'usr_' . $this->_xfUser['id'] . '.txt';
+        if (!file_put_contents($file, $csrfToken)) {
+            throw new \Exception('Failed to write CSRF-token to file');
+        }
+
+        return true;
+    }
+
+    /**
+     * Получение CSRF-токена из файла
+     *
+     * @return string Полученный CSRF-токен
+     */
+    protected function getCsrfToken()
+    {
+        $file = self::PATH_TO_CSRF . 'usr_' . $this->_xfUser['id'] . '.txt';
+        return file_exists($file) ? file_get_contents($file) : '';
     }
 }
