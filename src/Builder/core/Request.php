@@ -163,13 +163,6 @@ class Request
 
         if (false === empty($this->request->response)) {
             /**
-             * Ожидаем ответ не в формате JSON?...
-             */
-            if (false === $isJson) {
-                return $this->request->response;
-            }
-
-            /**
              * Ещё не получали AES-хэш?...
              */
             if (false !== stripos($this->request->response, 'Oops! Please enable JavaScript and Cookies in your browser.')) {
@@ -191,6 +184,13 @@ class Request
                  * Повторяем запрос
                  */
                 return $this->requestBuilder($uri, $method, $body, $options, $isJson);
+            }
+
+            /**
+             * Ожидаем ответ не в формате JSON?...
+             */
+            if (false === $isJson) {
+                return $this->request->response;
             }
 
             /**
