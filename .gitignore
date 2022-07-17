@@ -1,1 +1,2 @@
-src/Builder/cookies/*.txt
+vendor/
+composer.lock

@@ -1,5 +1,6 @@
-<h1 align="center">:trophy: LztCombine PHP</h1>
+<h1 align="center">:trophy: LztCombine PHP v2.0</h1>
 <h3 align="center">Библиотека для программного использования ВСЕГО функционала форума <a href="https://lolz.guru" target="_blank">lolz.guru</a></h3>
+<h4 align="center">:boom: Наконец, руки дошли обновить библиотеку :) :boom:</h4><br>
 <p align="center">
     <img alt="Made with PHP" src="https://img.shields.io/badge/Made%20with-PHP-%23FFD242?logo=php&logoColor=white">
     <img alt="Repo size" src="https://img.shields.io/github/repo-size/destyk/lztcombine-php">
@@ -9,18 +10,20 @@
 </p>
 
 ## Полезная информация
+
 - [:key: Установка библиотеки](#key-установка-библиотеки)
 - [:label: Builder](#label-builder)
   - [:memo: Как использовать?](#memo-использование-buildera)
   - [:open_file_folder: Доступные методы](#open_file_folder-доступные-методы-buildera)
     - [:pushpin: Метод createMethod](#pushpin-метод-createmethod)
     - [:pushpin: Метод login/verify2fa](#pushpin-метод-loginverify2fa)
+    - [:pushpin: Метод threads/bump](#pushpin-метод-threadsbump)
+    - [:pushpin: :boom: Метод threads/participate](#pushpin-метод-threadsparticipate)
     - [:pushpin: Метод market/purchase](#pushpin-метод-marketpurchase)
     - [:pushpin: Метод market/purchaseCheck](#pushpin-метод-marketpurchasecheck)
     - [:pushpin: Метод market/purchaseConfirm](#pushpin-метод-marketpurchaseconfirm)
     - [:pushpin: Метод market/paymentCreate](#pushpin-метод-marketpaymentcreate)
     - [:pushpin: Метод market/paymentCheck](#pushpin-метод-marketpaymentcheck)
-    - [:pushpin: Метод threads/bump](#pushpin-метод-threadsbump)
 - [:label: Официальное API](#label-официальное-api)
   - [:memo: Как использовать?](#memo-использование-официального-api)
   - [:open_file_folder: Доступные методы](#open_file_folder-доступные-методы-оф-api)
@@ -44,51 +47,58 @@
     - [:pushpin: Метод conversations/create](#pushpin-метод-conversationscreate)
     - [:pushpin: Метод conversations/delete](#pushpin-метод-conversationsdelete)
     - [:pushpin: Метод conversations/aboutOne](#pushpin-метод-conversationsaboutone)
-  
 
 ## :key: Установка библиотеки
-Установить данную библиотеку можно с помощью composer: 
 
-   ```sh
-   composer require destyk/lztcombine-php
-   ```
+Установить данную библиотеку можно с помощью composer:
+
+```sh
+composer require destyk/lztcombine-php
+```
 
 <h1 align="center">:label: Builder</h1>
 <h3 align="center">С помощью builder'a Вы сможете выполнить абсолютно любой запрос к форуму словно так, будто Вы его совершили в своём браузере, минуя официальный API.</h3>
 
 ## :memo: Использование builder'a
-:warning: Важно! Для корректной работы builder'a, требуется установленное php-расширение ```V8Js```.<br><br>
-Чтобы начать работу, Вам необходим параметр ```xf_user```.<br>
+
+:warning: Важно! Для корректной работы builder'a, требуется установленное php-расширение `V8Js`.<br><br>
+Чтобы начать работу, Вам необходим параметр `xf_user`.<br>
 Узнать как и где его получить можно <a href="https://disk.yandex.ru/i/RatjHwrb-yN3VA">здесь</a>.
+
 ```php
 require('vendor/autoload.php');
 
+use DestyK\LztPHP\Builder\Core\Request;
+use DestyK\LztPHP\Builder\Init;
+use DestyK\LztPHP\RequestException;
+use DestyK\LztPHP\Exception;
+
 try {
-    $builder = new \DestyK\LztPHP\Builder\Init('*xf_user*');
-    
+    $builder = new Init('*xf_user*');
+
     // Если на Вашем аккаунте включена двуфакторная система авторизации, то изначально стоит вызвать метод верификации
     // Подробнее об этом методе чуть ниже
     $builder->login()->verify2fa('*Одноразовый код*', '*Тип приложения*');
-    
+
     // Можно создать свой собственный метод. Например, добавить человека в список игнор-листа.
-    $builder->createMethod('account/ignore', $builder::POST, [
+    $builder->createMethod('account/ignore', Request::POST, [
         'users' => 'BotFather,'
     ]);
-    
+
     // Также есть возможность использовать методы, реализованные из "коробки".
-    // Например, поднять указанную тему.
-    $builder->threads()->bump('*id Вашей темы*');
-} catch(Exception $e) {
+    // Например, участвовать в конкурсе
+    $builder->threads()->participate('*id темы с розыгрышем*');
+} catch(RequestException | Exception $e) {
     echo $e->getMessage();
 }
 ```
 
 ## :open_file_folder: Доступные методы builder'a
 
-#### :pushpin: Метод ```login/verify2fa```
+#### :pushpin: Метод `login/verify2fa`
 
 Позволяет пройти проверку системой 2FA.<br>
-:warning: Важно! Этот метод стоит использовать единоразово, если появилось следующее сообщение при включенной системе двуфакторной авторизации: ```You need to call the method: $builder->login()->verify2fa(code, provider)```.
+:warning: Важно! Этот метод стоит использовать единоразово, если появилось следующее сообщение при включенной системе двуфакторной авторизации: `You need to call the method: $builder->login()->verify2fa(code, provider)`.
 
 ```php
 ...
@@ -98,10 +108,13 @@ $code = 2444332; // Одноразовый код из приложения, Tel
 $provider = 'totp'; // Тип приложения. Доступны значения: totp (приложение), telegram (Telegram) и email (эл. почта)
 $builder->login()->verify2fa($code, $provider);
 ```
+
 После успешного прохождения авторизации, вызов этого метода лучше убрать, т.к. будет совершаться дополнительный лишний запрос к форуму.
-#### :pushpin: Метод ```createMethod```
+
+#### :pushpin: Метод `createMethod`
 
 Позволяет создать абсолютно любой запрос к форуму lolzteam, минуя официальный API.
+
 ```php
 ...
 
@@ -109,9 +122,33 @@ $builder->login()->verify2fa($code, $provider);
 $threadId = 2444332; // ID Вашей темы, которую нужно поднять
 $builder->createMethod('threads/' . $threadId . '/bump', $builder::GET);
 ```
-#### :pushpin: Метод ```market/purchase```
+
+#### :pushpin: :boom: Метод `threads/participate`
+
+Позволяет участвовать в конкурсе.
+
+```php
+...
+
+$threadId = 2444332; // ID темы с конкурсом
+$builder->threads()->participate($threadId);
+```
+
+#### :pushpin: Метод `threads/bump`
+
+Позволяет поднять указанную тему (если она является Вашей).
+
+```php
+...
+
+$threadId = 2444332; // ID Вашей темы, которую нужно поднять
+$builder->threads()->bump($threadId);
+```
+
+#### :pushpin: Метод `market/purchase`
 
 Попытка купить указанный аккаунт.
+
 ```php
 ...
 
@@ -119,29 +156,35 @@ $itemId = 2444332; // ID аккаунта, который нужно купит�
 $price = 15; // Стоимость, за которую готовы совершить покупку
 $builder->market()->purchase($itemId, $price);
 ```
-#### :pushpin: Метод ```market/purchaseCheck```
+
+#### :pushpin: Метод `market/purchaseCheck`
 
 Проверяем купленный аккаунт на валид/невалид.<br>
-:warning: Важно! Этот метод необходимо вызывать после ```market/purchase```
+:warning: Важно! Этот метод необходимо вызывать после `market/purchase`
+
 ```php
 ...
 
 $itemId = 2444332; // ID аккаунта, который нужно проверить
 $builder->market()->purchaseCheck($itemId);
 ```
-#### :pushpin: Метод ```market/purchaseConfirm```
+
+#### :pushpin: Метод `market/purchaseConfirm`
 
 Подтверждаем покупку и получаем купленный товар.<br>
-:warning: Важно! Этот метод необходимо вызывать после ```market/purchaseCheck```
+:warning: Важно! Этот метод необходимо вызывать после `market/purchaseCheck`
+
 ```php
 ...
 
 $itemId = 2444332; // ID аккаунта, покупку которого нужно подтвердить
 $builder->market()->purchaseConfirm($itemId);
 ```
-#### :pushpin: Метод ```market/paymentCreate```
+
+#### :pushpin: Метод `market/paymentCreate`
 
 Создаёт новую заявку на пополнение счёта
+
 ```php
 ...
 
@@ -150,36 +193,33 @@ $currency = 'rub'; // Валюта пополнения
 $method = 'P2PQiwi'; // Метод оплаты
 $builder->market()->paymentCreate($currency, $amount, $method);
 ```
-#### :pushpin: Метод ```market/paymentCheck```
+
+#### :pushpin: Метод `market/paymentCheck`
 
 Проверяет поступление платежа по ранее созданной заявке.
+
 ```php
 ...
 
 $orderId = 125531; // ID ранее созданной Вами заявки
 $builder->market()->paymentCheck($orderId);
 ```
-#### :pushpin: Метод ```threads/bump```
-
-Позволяет поднять указанную тему (если она является Вашей).
-```php
-...
-
-$threadId = 2444332; // ID Вашей темы, которую нужно поднять
-$builder->threads()->bump($threadId);
-```
 
 <h1 align="center">:label: Официальное API</h1>
 <h3 align="center">В отличие от builder'a, официальное API полностью одобрено администрацией проекта.</h3>
 
 ## :memo: Использование официального API
-Чтобы начать работу, Вам необходимо получить ```access_token```.<br>
+
+Чтобы начать работу, Вам необходимо получить `access_token`.<br>
 Узнать как и где его получить можно <a href="https://lolz.guru/account/api">здесь</a>.
+
 ```php
 require('vendor/autoload.php');
 
+use DestyK\LztPHP\API\Init;
+
 try {
-    $api = new \DestyK\LztPHP\API\Init('*Ваш token*');
+    $api = new Init('*Ваш token*');
     $result = $api->users()->whoIAm();
 } catch(Exception $e) {
     echo $e->getMessage();
@@ -188,7 +228,7 @@ try {
 
 ## :open_file_folder: Доступные методы оф. API
 
-#### :pushpin: Метод ```threads/getList```
+#### :pushpin: Метод `threads/getList`
 
 Парсит темы с форума, исходя из указанных параметров.
 
@@ -203,8 +243,7 @@ $threads = $api->threads()->getList([
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#get-threads)**
 
-
-#### :pushpin: Метод ```threads/aboutOne```
+#### :pushpin: Метод `threads/aboutOne`
 
 Парсит информацию об указанной теме.
 
@@ -219,7 +258,7 @@ $thread = $api->threads()->aboutOne($threadId);
 
 ---
 
-#### :pushpin: Метод ```posts/getList```
+#### :pushpin: Метод `posts/getList`
 
 Парсит посты из определённой темы, исходя из указанных параметров.
 
@@ -235,8 +274,7 @@ $threads = $api->posts()->getList([
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#get-posts)**
 
-
-#### :pushpin: Метод ```posts/create```
+#### :pushpin: Метод `posts/create`
 
 Создаёт новый пост в указанной теме.
 
@@ -252,8 +290,7 @@ $post = $api->posts()->create($threadId, $postBody, [
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#post-posts)**
 
-
-#### :pushpin: Метод ```posts/delete```
+#### :pushpin: Метод `posts/delete`
 
 Удаляет созданный пост.
 
@@ -268,7 +305,7 @@ $api->posts()->delete($postId, [
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#delete-postspostid)**
 
-#### :pushpin: Метод ```posts/like```
+#### :pushpin: Метод `posts/like`
 
 Поставить лайк на указанный пост.
 
@@ -281,7 +318,7 @@ $api->posts()->like($postId);
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#post-postspostidlikes)**
 
-#### :pushpin: Метод ```posts/unlike```
+#### :pushpin: Метод `posts/unlike`
 
 Убрать лайк с указанного поста.
 
@@ -296,7 +333,7 @@ $api->posts()->unlike($postId);
 
 ---
 
-#### :pushpin: Метод ```users/find```
+#### :pushpin: Метод `users/find`
 
 Парсит пользователей форума, исходя из указанных параметров.
 
@@ -311,8 +348,7 @@ $users = $api->users()->getList([
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#get-usersfind)**
 
-
-#### :pushpin: Метод ```users/getPosts```
+#### :pushpin: Метод `users/getPosts`
 
 Спрсить список постов пользователя.
 
@@ -328,8 +364,7 @@ $posts = $api->users()->getPosts($userId, [
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#get-usersuseridtimeline)**
 
-
-#### :pushpin: Метод ```users/subscribe```
+#### :pushpin: Метод `users/subscribe`
 
 Оформляет подписку на указанного пользователя.
 
@@ -342,7 +377,7 @@ $api->users()->subscribe($userId);
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#post-usersuseridfollowers)**
 
-#### :pushpin: Метод ```users/unsubscribe```
+#### :pushpin: Метод `users/unsubscribe`
 
 Отменяет подписку на указанного пользователя.
 
@@ -355,7 +390,7 @@ $api->users()->unsubscribe($userId);
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#delete-usersuseridfollowers)**
 
-#### :pushpin: Метод ```users/whoIAm```
+#### :pushpin: Метод `users/whoIAm`
 
 Получить информацию о текущем токене.
 
@@ -369,7 +404,7 @@ $info = $api->users()->whoIAm();
 
 ---
 
-#### :pushpin: Метод ```pages/getList```
+#### :pushpin: Метод `pages/getList`
 
 Парсит разделы с форума, исходя из указанных параметров.
 
@@ -384,8 +419,7 @@ $pages = $api->pages()->getList([
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#get-pages)**
 
-
-#### :pushpin: Метод ```pages/aboutOne```
+#### :pushpin: Метод `pages/aboutOne`
 
 Парсит информацию об указанном разделе.
 
@@ -400,7 +434,7 @@ $pageInfo = $api->pages()->aboutOne($pageId);
 
 ---
 
-#### :pushpin: Метод ```notifications/getList```
+#### :pushpin: Метод `notifications/getList`
 
 Парсит оповещения пользователя.
 
@@ -412,8 +446,7 @@ $notifications = $api->notifications()->getList();
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#get-notifications)**
 
-
-#### :pushpin: Метод ```notifications/aboutOne```
+#### :pushpin: Метод `notifications/aboutOne`
 
 Получает содержимое оповещения.
 
@@ -428,7 +461,7 @@ $notificationInfo = $api->notifications()->aboutOne($notificationId);
 
 ---
 
-#### :pushpin: Метод ```conversations/getList```
+#### :pushpin: Метод `conversations/getList`
 
 Парсит личные сообщения, исходя из указанных параметров.
 
@@ -443,8 +476,7 @@ $conversations = $api->conversations()->getList([
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#get-conversations)**
 
-
-#### :pushpin: Метод ```conversations/create```
+#### :pushpin: Метод `conversations/create`
 
 Создаёт новое личное сообщение.
 
@@ -459,8 +491,7 @@ $conversation = $api->conversations()->create($conversationTitle, $recipients, $
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#post-conversations)**
 
-
-#### :pushpin: Метод ```conversations/delete```
+#### :pushpin: Метод `conversations/delete`
 
 Удаляет личное сообщение.
 
@@ -473,7 +504,7 @@ $api->conversations()->delete($conversationId);
 
 **[Подробнее о входящих/выходящих параметрах метода](https://github.com/xfrocks/bdApi/blob/master/docs/api.markdown#delete-conversationsconversationid)**
 
-#### :pushpin: Метод ```conversations/aboutOne```
+#### :pushpin: Метод `conversations/aboutOne`
 
 Получить подробное содержимое личного сообщения.
 

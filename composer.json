@@ -1,10 +1,20 @@
 {
-    "name":"destyk/lztcombine-php",
-    "version": "1.1.2",
+    "name": "destyk/lztcombine-php",
+    "version": "2.0.0",
     "minimum-stability": "stable",
     "type": "library",
     "description": "LztCombine PHP - библиотека для программного использования ВСЕГО функционала форума",
-    "keywords": ["lzt","php","api","builder"],
+    "keywords": [
+        "lzt",
+        "php",
+        "api",
+        "builder",
+        "zelenka",
+        "lolz api",
+        "zelenka api",
+        "lolz builder",
+        "zelenka builder"
+    ],
     "homepage": "https://github.com/destyk/lztcombine-php",
     "license": "MIT",
     "authors": [
@@ -18,15 +28,19 @@
         "source": "https://github.com/destyk/lztcombine-php",
         "issues": "https://github.com/destyk/lztcombine-php/issues"
     },
-    "require":{
-        "php":">=7.3.0",
-        "curl/curl": "1.9.*"
+    "require": {
+        "php": ">=7.3.0",
+        "curl/curl": "1.9.*",
+        "ext-v8js": "*"
     },
-    "autoload":{
+    "autoload": {
         "classmap": [
             "src",
             "src/API",
-            "src/Builder"
+            "src/Builder",
+            "src/Builder/core",
+            "src/Builder/core/types",
+            "src/Builder/section"
         ]
     }
 }

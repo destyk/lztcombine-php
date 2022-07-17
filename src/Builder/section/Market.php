@@ -1,16 +1,17 @@
 <?php
+
 /**
  * LztCombine - библиотека для программного использования ВСЕГО функционала форума lolzteam
  *
  * @package   destyk/lztcombine-php
  * @author    Nikita <nikita.karpov.1910@mail.ru>
- * @copyright 2021 (c) DestyK
+ * @copyright 2022 (c) DestyK
  * @license   MIT https://raw.githubusercontent.com/destyk/lztcombine-php/master/LICENSE
  */
 
-namespace DestyK\LztPHP\Builder;
+namespace DestyK\LztPHP\Builder\Section;
 
-use DestyK\LztPHP\RequestException;
+use DestyK\LztPHP\Builder\Core\Request;
 
 /**
  * Класс для взаимодействия с методами МАРКЕТА ВНЕ API
@@ -18,8 +19,25 @@ use DestyK\LztPHP\RequestException;
  * @see https://github.com/destyk/lztcombine-php#pushpin-метод-market
  *
  */
-class Market extends Init
+class Market
 {
+    /**
+     * Класс для совершения запросов
+     *
+     * @var Request
+     */
+    private $request;
+
+    /**
+     * Конструктор для раздела Login
+     *
+     * @param Request $request Объект класса Request
+     */
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+    }
+
     /**
      * Попытка купить позицию на маркете
      *
@@ -27,12 +45,10 @@ class Market extends Init
      * @param float $price  Цена, по которой Вы готовы купить позицию
      *
      * @return array Возврат результата запроса.
-     *
-     * @throws RequestException Выбрасывается при невалидном ответе.
      */
     public function purchase(int $itemId, float $price)
     {
-        return $this->requestBuilder('market/' . $itemId . '/balance/check', parent::GET, [
+        return $this->request->requestBuilder('market/' . $itemId . '/balance/check', Request::GET, [
             'price' => $price
         ]);
     }
@@ -43,12 +59,10 @@ class Market extends Init
      * @param int $itemId Идентификатор позиции
      *
      * @return array Возврат результата запроса.
-     *
-     * @throws RequestException Выбрасывается при невалидном ответе.
      */
     public function purchaseCheck(int $itemId)
     {
-        return $this->requestBuilder('market/' . $itemId . '/check-account', parent::POST, [
+        return $this->request->requestBuilder('market/' . $itemId . '/check-account', Request::POST, [
             'hide_info' => 1
         ]);
     }
@@ -59,12 +73,10 @@ class Market extends Init
      * @param int $itemId Идентификатор позиции
      *
      * @return array Возврат результата запроса.
-     *
-     * @throws RequestException Выбрасывается при невалидном ответе.
      */
     public function purchaseConfirm(int $itemId)
     {
-        return $this->requestBuilder('market/' . $itemId . '/confirm-buy', parent::POST, [
+        return $this->request->requestBuilder('market/' . $itemId . '/confirm-buy', Request::POST, [
             '_xfConfirm' => 1
         ]);
     }
@@ -77,12 +89,10 @@ class Market extends Init
      * @param string $method   Метод оплаты
      *
      * @return array Возврат результата запроса.
-     *
-     * @throws RequestException Выбрасывается при невалидном ответе.
      */
     public function paymentCreate(string $currency, float $amount, string $method)
     {
-        return $this->requestBuilder('payment/method', parent::POST, [
+        return $this->request->requestBuilder('payment/method', Request::POST, [
             'currency'     => $currency,
             'amount'       => $amount,
             'method'       => $method,
@@ -98,12 +108,10 @@ class Market extends Init
      * @param int $paymentId Идентификатор заявки
      *
      * @return array Возврат результата запроса.
-     *
-     * @throws RequestException Выбрасывается при невалидном ответе.
      */
     public function paymentCheck(int $paymentId)
     {
-        return $this->requestBuilder('payment/check-payment', parent::POST, [
+        return $this->request->requestBuilder('payment/check-payment', Request::POST, [
             'payment_id' => $paymentId
         ]);
     }
