@@ -5,7 +5,7 @@
  *
  * @package   destyk/lztcombine-php
  * @author    Nikita <nikita.karpov.1910@mail.ru>
- * @copyright 2021 (c) DestyK
+ * @copyright 2022 (c) DestyK
  * @license   MIT https://raw.githubusercontent.com/destyk/lztcombine-php/master/LICENSE
  */
 
@@ -18,6 +18,7 @@ use DestyK\LztPHP\Builder\Core\Request;
  *
  * @see https://github.com/destyk/lztcombine-php#pushpin-метод-threadsbump
  *
+ * @property Request $request Класс для совершения запросов
  */
 class Threads
 {

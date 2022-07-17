@@ -57,7 +57,7 @@ class Security
      * @param string $encryUserHash Входящий хэш, на основе которого генерируется AES-хэш
      * 
      * @return string
-     * @throws Exception
+     * @throws V8JsException
      */
     public function generateHash(string $entryUserHash)
     {
@@ -76,7 +76,7 @@ class Security
             $v8 = new V8Js('PHP', [], [], true, $snapshot);
 
             $result = $v8->executeString($hashLibrary);
-        } catch (Exception | V8JsException $e) {
+        } catch (V8JsException $e) {
             throw new Exception(
                 'Error generating user aes-hash: ' . $e->getMessage()
             );

@@ -19,7 +19,6 @@ use DestyK\LztPHP\Builder\Section\Login;
 use DestyK\LztPHP\Builder\Section\Market;
 use DestyK\LztPHP\Builder\Section\Threads;
 
-use DestyK\LztPHP\RequestException;
 use DestyK\LztPHP\Exception;
 
 /**
@@ -29,6 +28,7 @@ use DestyK\LztPHP\Exception;
  *
  * @property User     $user     Модель пользователя
  * @property Security $security Класс для обхода защиты
+ * @property Request  $request  Класс для совершения запросов
  */
 class Init
 {
@@ -92,6 +92,8 @@ class Init
 
     /**
      * Пробрасываем объект класса Login
+     * 
+     * @return Login
      */
     public function login()
     {
@@ -99,7 +101,9 @@ class Init
     }
 
     /**
-     * Пробрасываем объект класса Login
+     * Пробрасываем объект класса Market
+     * 
+     * @return Market
      */
     public function market()
     {
@@ -107,7 +111,9 @@ class Init
     }
 
     /**
-     * Пробрасываем объект класса Login
+     * Пробрасываем объект класса Threads
+     * 
+     * @return Threads
      */
     public function threads()
     {
@@ -125,7 +131,7 @@ class Init
      * @param array  $options
      * @param bool   $isJson
      * 
-     * @return bool|array Ответ запроса.
+     * @return array Ответ запроса.
      */
     public function createMethod(string $uri, string $method = Request::GET, array $body = [], array $options = [], bool $isJson = true)
     {

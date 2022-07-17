@@ -18,6 +18,7 @@ use DestyK\LztPHP\Builder\Core\Request;
  *
  * @see https://github.com/destyk/lztcombine-php#pushpin-метод-login
  *
+ * @property Request $request Класс для совершения запросов
  */
 class Login
 {

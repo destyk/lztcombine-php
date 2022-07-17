@@ -18,6 +18,7 @@ use DestyK\LztPHP\Builder\Core\Request;
  *
  * @see https://github.com/destyk/lztcombine-php#pushpin-метод-market
  *
+ * @property Request $request Класс для совершения запросов
  */
 class Market
 {

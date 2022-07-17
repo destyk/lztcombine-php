@@ -26,7 +26,7 @@ class BaseType
      * 
      * @return void
      *
-     * @throws \Exception Выбрасывается при возникновении ошибки
+     * @throws Exception Выбрасывается при возникновении ошибки
      */
     protected function writeInFile(string $path, string $data)
     {
@@ -42,9 +42,9 @@ class BaseType
      *
      * @param string $path Путь к файлу
      * 
-     * @return void
+     * @return string
      *
-     * @throws \Exception Выбрасывается при возникновении ошибки
+     * @throws Exception Выбрасывается при возникновении ошибки
      */
     protected function getFromFile(string $path)
     {

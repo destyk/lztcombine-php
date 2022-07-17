@@ -22,8 +22,9 @@ use DestyK\LztPHP\Exception;
  *
  * @see https://github.com/destyk/lztcombine-php#label-builder
  *
- * @property User $user Модель пользователя
- * @property Curl $curl Библиотека для работы с cURL
+ * @property User     $user     Модель пользователя
+ * @property Security $security Класс для обхода методов защиты
+ * @property Curl     $curl     Библиотека для работы с cURL
  */
 class Request
 {
@@ -226,7 +227,9 @@ class Request
                 );
             }
 
-            // Нужно пройти проверку системой 2FA
+            /**
+             * Нужно пройти проверку системой 2FA
+             */
             if (true === isset($json['_redirectTarget']) && false !== stripos($json['_redirectTarget'], 'login/two-step')) {
                 if ($uri == 'login/two-step') {
                     return $this->requestBuilder($uri, $method, $body, $options, $isJson);
@@ -248,7 +251,5 @@ class Request
                 $this->request->error_code
             );
         }
-
-        return true;
     }
 }

@@ -12,50 +12,74 @@
 namespace DestyK\LztPHP\Builder\Core\Types;
 
 use DestyK\LztPHP\Builder\Core\BaseType;
-use DestyK\LztPHP\Exception;
 
 /**
  * Модуль для хранения данных пользователя
+ * 
+ * @property int    $id          ID пользователя на форуме
+ * @property string $hash        Хэш из токена _xfUser
+ * @property string $aesHash     AES хэш
+ * @property string $csrf        _xfToken
+ * @property string $assets      Общий путь к пользовательским файлам
+ * @property string $aesPath     Путь к файлу с AES-хэшем
+ * @property string $csrfPath    Путь к файлу с CSRF-токеном
+ * @property string $cookiesPath Путь к файлу с cookies
  */
 class User extends BaseType
 {
     /**
      * ID пользователя на форуме
+     * 
+     * @var int
      */
     private $id;
 
     /**
      * Хэш из токена _xfUser
+     * 
+     * @var string
      */
     private $hash;
 
     /**
      * AES хэш
+     * 
+     * @var string
      */
     private $aesHash;
 
     /**
      * _xfToken
+     * 
+     * @var string
      */
     private $csrf;
 
     /**
      * Общий путь к пользовательским файлам
+     * 
+     * @var string
      */
     private $assets;
 
     /**
      * Путь к файлу с AES-хэшем
+     * 
+     * @var string
      */
     private $aesPath;
 
     /**
      * Путь к файлу с CSRF-токеном
+     * 
+     * @var string
      */
     private $csrfPath;
 
     /**
      * Путь к файлу с cookies
+     * 
+     * @var string
      */
     private $cookiesPath;
 
@@ -121,8 +145,6 @@ class User extends BaseType
      * Получение AES-хэша
      * 
      * @return string
-     * 
-     * @throws Exception
      */
     public function getAesHash()
     {
@@ -137,8 +159,6 @@ class User extends BaseType
      * Получение CSRF-токена
      * 
      * @return string
-     * 
-     * @throws Exception
      */
     public function getCsrf()
     {
@@ -162,6 +182,8 @@ class User extends BaseType
     /**
      * Устанавка ID пользователя
      * 
+     * @param int $id ID пользователя
+     * 
      * @return void
      */
     public function setId(int $id)
@@ -171,6 +193,8 @@ class User extends BaseType
 
     /**
      * Установка хэша из _xfUser
+     * 
+     * @param string $hash Хэш из _xfUser
      * 
      * @return void
      */
@@ -182,9 +206,9 @@ class User extends BaseType
     /**
      * Установка AES-хэша
      * 
-     * @return void
+     * @param string $aesHash AES-хэш
      * 
-     * @throws Exception
+     * @return void
      */
     public function setAesHash(string $aesHash)
     {
@@ -195,9 +219,9 @@ class User extends BaseType
     /**
      * Установка CSRF-токена
      * 
-     * @return void
+     * @param string $csrf CSRF-токен
      * 
-     * @throws Exception
+     * @return void
      */
     public function setCsrf(string $csrf)
     {
