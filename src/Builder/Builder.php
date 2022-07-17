@@ -119,10 +119,16 @@ class Init
      * Данная фича позволяет создавать свои собственные запросы,
      * которых нет "из-под коробки"
      *
+     * @param string $uri
+     * @param string $method
+     * @param array  $body
+     * @param array  $options
+     * @param bool   $isJson
+     * 
      * @return bool|array Ответ запроса.
      */
-    public function createMethod(string $uri, string $method = Request::GET, array $body = [], array $options = [])
+    public function createMethod(string $uri, string $method = Request::GET, array $body = [], array $options = [], bool $isJson = true)
     {
-        return $this->request->requestBuilder($uri, $method, $body, $options);
+        return $this->request->requestBuilder($uri, $method, $body, $options, $isJson);
     }
 }
