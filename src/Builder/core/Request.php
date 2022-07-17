@@ -220,13 +220,6 @@ class Request
                     return $this->requestBuilder($uri, $method, $body, $options, $isJson);
                 }
 
-                /**
-                 * Не очищаем куки, если всё ещё проходим 2FA-авторизацию
-                 */
-                if (false === stripos($json['error'][0], 'The two-step verification')) {
-                    $this->user->clearAssets();
-                }
-
                 throw new RequestException(
                     clone $this->request,
                     $json['error'][0]
