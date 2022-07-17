@@ -55,10 +55,13 @@ class BaseType
             file_put_contents($path, '');
         }
 
-        if (false === file_get_contents($path)) {
+        $result = file_get_contents($path);
+        if (false === $result) {
             throw new Exception(
                 'Getting error from file ' . $path
             );
         }
+
+        return $result;
     }
 }
