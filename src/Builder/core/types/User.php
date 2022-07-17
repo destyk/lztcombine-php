@@ -236,6 +236,10 @@ class User extends BaseType
      */
     public function clearAssets()
     {
-        array_map('unlink', array_filter((array) glob($this->assets)));
+        if (file_exists($this->assets)) {
+            foreach (glob($this->assets . '/*') as $file) {
+                unlink($file);
+            }
+        }
     }
 }
