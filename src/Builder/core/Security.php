@@ -97,7 +97,7 @@ class Security
     {
         try {
             $html = $request->requestBuilder('login/csrf-token-refresh', Request::POST, ['_xfResponseType' => 'html'], [], false);
-        } catch (Exception | RequestException $e) {
+        } catch (\Exception $e) {
             throw new Exception(
                 'Cannot parse csrf-token: ' . $e->getMessage()
             );
