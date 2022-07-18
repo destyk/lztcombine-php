@@ -1,6 +1,6 @@
 {
     "name": "destyk/lztcombine-php",
-    "version": "2.0.3",
+    "version": "2.0.31",
     "minimum-stability": "stable",
     "type": "library",
     "description": "LztCombine PHP - библиотека для программного использования ВСЕГО функционала форума",
@@ -29,7 +29,7 @@
         "issues": "https://github.com/destyk/lztcombine-php/issues"
     },
     "require": {
-        "php": ">=7.3.0",
+        "php": ">=7.0.0",
         "curl/curl": "1.9.*",
         "ext-v8js": "*"
     },
