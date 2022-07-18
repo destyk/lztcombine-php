@@ -18,7 +18,7 @@
     - [:pushpin: Метод createMethod](#pushpin-метод-createmethod)
     - [:pushpin: Метод login/verify2fa](#pushpin-метод-loginverify2fa)
     - [:pushpin: Метод threads/bump](#pushpin-метод-threadsbump)
-    - [:pushpin: :boom: Метод threads/participate](#pushpin-метод-threadsparticipate)
+    - [:pushpin: :boom: Метод threads/participate](#pushpin-boom-метод-threadsparticipate)
     - [:pushpin: Метод market/purchase](#pushpin-метод-marketpurchase)
     - [:pushpin: Метод market/purchaseCheck](#pushpin-метод-marketpurchasecheck)
     - [:pushpin: Метод market/purchaseConfirm](#pushpin-метод-marketpurchaseconfirm)
@@ -61,7 +61,8 @@ composer require destyk/lztcombine-php
 
 ## :memo: Использование builder'a
 
-:warning: Важно! Для корректной работы builder'a, требуется установленное php-расширение `V8Js`.<br><br>
+:warning: Важно! Для корректной работы builder'a, требуется установленное php-расширение `V8Js`.<br>
+Инструкция по установке расширения на Ubuntu <a href="https://github.com/destyk/lztcombine-php/tree/main/v8js">находится здесь</a>.<br><br>
 Чтобы начать работу, Вам необходим параметр `xf_user`.<br>
 Узнать как и где его получить можно <a href="https://disk.yandex.ru/i/RatjHwrb-yN3VA">здесь</a>.
 
@@ -70,7 +71,6 @@ require('vendor/autoload.php');
 
 use DestyK\LztPHP\Builder\Core\Request;
 use DestyK\LztPHP\Builder\Init;
-use DestyK\LztPHP\RequestException;
 use DestyK\LztPHP\Exception;
 
 try {
@@ -87,8 +87,9 @@ try {
 
     // Также есть возможность использовать методы, реализованные из "коробки".
     // Например, участвовать в конкурсе
-    $builder->threads()->participate('*id темы с розыгрышем*');
-} catch(RequestException | Exception $e) {
+    $threadId = 4120785; // Id темы с розыгрышем
+    $builder->threads()->participate($threadId);
+} catch(\Exception $e) {
     echo $e->getMessage();
 }
 ```
@@ -104,7 +105,7 @@ try {
 ...
 
 // Проходим авторизацию с помощью системы 2FA
-$code = 2444332; // Одноразовый код из приложения, Telegram или же с эл. почты
+$code = '2444332'; // Одноразовый код из приложения, Telegram или же с эл. почты
 $provider = 'totp'; // Тип приложения. Доступны значения: totp (приложение), telegram (Telegram) и email (эл. почта)
 $builder->login()->verify2fa($code, $provider);
 ```
@@ -221,7 +222,7 @@ use DestyK\LztPHP\API\Init;
 try {
     $api = new Init('*Ваш token*');
     $result = $api->users()->whoIAm();
-} catch(Exception $e) {
+} catch(\Exception $e) {
     echo $e->getMessage();
 }
 ```
