@@ -49,7 +49,7 @@ class Login
     /**
      * Добавление IP в доверенные (при включенном 2FA)
      *
-     * @param int    $code      Одноразовый код
+     * @param string $code      Одноразовый код
      * @param string $provider  Тип приложения для авторизации
      *                          Доступны следующие значения:
      *                            totp     - подтверждение через приложение (Например, Google Auth)
@@ -58,7 +58,7 @@ class Login
      *
      * @return array
      */
-    public function verify2fa(int $code, string $provider)
+    public function verify2fa(string $code, string $provider)
     {
         return $this->request->requestBuilder(self::PREFIX_URI . '/two-step', Request::POST, [
             'code'       => $code,
