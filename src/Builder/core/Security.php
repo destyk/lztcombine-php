@@ -12,7 +12,6 @@
 namespace DestyK\LztPHP\Builder\Core;
 
 use DestyK\LztPHP\Builder\Core\Request;
-use DestyK\LztPHP\RequestException;
 use DestyK\LztPHP\Exception;
 
 use V8Js;
@@ -57,7 +56,7 @@ class Security
      * @param string $encryUserHash Входящий хэш, на основе которого генерируется AES-хэш
      * 
      * @return string
-     * @throws V8JsException
+     * @throws Exception
      */
     public function generateHash(string $entryUserHash)
     {
