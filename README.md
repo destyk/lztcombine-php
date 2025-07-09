@@ -1,3 +1,4 @@
+Проверка для модератора access на lzt
 <h1 align="center">:trophy: LztCombine PHP v2.0</h1>
 <h3 align="center">Библиотека для программного использования ВСЕГО функционала форума <a href="https://lolz.guru" target="_blank">lolz.guru</a></h3>
 <h4 align="center">:boom: Наконец, руки дошли обновить библиотеку :) :boom:</h4><br>
